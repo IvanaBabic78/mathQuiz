@@ -1,0 +1,38 @@
+<app-host-navbar></app-host-navbar>
+<div class="container" style="text-align: center;">
+
+    <div *ngIf="question == null && teammates != undefined">
+        <h3 style="margin-top:25px; margin-bottom:50px;">Добродошли тим: {{teammates.team.name}}</h3>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Такмичари</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let u of teammates.participants">
+                    <td>{{u.firstName}} {{u.lastName}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="question != null">
+        <h3 style="margin-top:25px; margin-bottom:50px;">Задатак</h3>
+        <div style="text-align: center;">
+            <img *ngIf='imagePath' [src]="imagePath">
+            <br/>
+            <br/>
+            <p *ngIf="timeLeft > 0">Преостало време: {{timeLeft}} секунди</p>
+            <p *ngIf="timeLeft == 0">Време је истекло!</p>
+            <br/>
+            <form [formGroup]='form'>
+                <div class="form-group">
+                    <input type="text" class="form-control" formControlName="answer">
+                </div>
+                <button (click)='onSubmitAnswer()' [disabled]="!form.valid || timeLeft == 0" type="submit" class="btn btn-info login" *ngIf="!answered">Пошаљи одговор</button>
+                <p *ngIf="answered">Послали сте одговор!</p>
+            </form>
+        </div>
+    </div>
+</div>

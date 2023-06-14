@@ -1,0 +1,189 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+    <h3 style="margin-top:25px; margin-bottom:50px;">Такмичења</h3>
+    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#addCompetition" (click)="openCompetitionModal()">+ Додај такмичење</button>
+    <br />
+    <br />
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Назив такмичења</th>
+                <th scope="col">Датум почетка</th>
+                <th scope="col">Датум завршетка</th>
+                <th scope="col">Место одржавања</th>
+                <th scope="col"></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let c of competitions">
+                <td>{{c.name}}</td>
+                <td>{{c.startDate | date: 'dd/MM/yyyy'}}</td>
+                <td>{{c.endDate | date: 'dd/MM/yyyy'}}</td>
+                <td>{{c.city}}</td>
+                <td><i class="fa fa-trash icon" data-toggle="modal" data-target="#deleteModal" (click)="setSelectedCompetition(c.id)"></i></td>
+                <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#actionModal" (click)="addQuestions(c.id)">Питања</button> </td>
+                <td><button type="button" class="btn btn-info" (click)="openCompetition(c.id)">Тимови</button> </td>
+                <!--   <td>
+                 <i data-toggle="tooltip" title="Unconfrm user!" data-placement="top" class="fa fa-check-square icon confirmedIcon" *ngIf="e.confirmed" (click)="setEmployeeConfirmation(e.id, false)"></i>
+                 <i data-toggle="tooltip" title="Confirm user!" data-placement="top" class="fa fa-check-square icon unconfirmedIcon" *ngIf="!e.confirmed" (click)="setEmployeeConfirmation(e.id, true)"></i>
+              </td>-->
+            </tr>
+        </tbody>
+    </table>
+    <!-- Modal delete -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog top15" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Да ли сте сигурни да желите да обришете такмичење?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Поништи</button>
+                    <button type="button" class="btn btn-info" (click)="deleteCompetition()" data-dismiss="modal">Обриши</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal competition-->
+    <div class="modal fade" id="addCompetition" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg top15" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="exampleModalLabel">Додај такмичење</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <br />
+                        <form [formGroup]='competitionForm'>
+                            <div class="form-group">
+                                <label>Назив</label>
+                                <input type="text" class="form-control" formControlName="name" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label>Датум почетка</label>
+                                <input type="date" class="form-control" formControlName="startDate" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label>Датум завршетка</label>
+                                <input type="date" class="form-control" formControlName="endDate" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label>Место одржавања</label>
+                                <input type="text" class="form-control" formControlName="city" placeholder="">
+                            </div>
+                        </form>
+                    </div>
+                    <p style="color:tomato;" *ngIf='dateError'>
+                        Датум завршетка мора бити након датума почетка.</p>
+                    <br />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Поништи</button>
+                    <button type="button" class="btn btn-info" (click)="saveCompetition()" [disabled]="!competitionForm.valid">Сачувај</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal questions-->
+    <div class="modal fade" id="actionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg top15" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="exampleModalLabel">Питања</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="openNewQuestionForm(false)">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn btn-outline-info" (click)="openNewQuestionForm(true)">+ Додај
+                  питање</button>
+                    <br />
+
+                    <!-- ADD QUESTION -->
+                    <div *ngIf="openQuestionForm">
+                        <br />
+                        <form [formGroup]='form'>
+                            <div class="form-group">
+                                <label>Кратак опис</label>
+                                <input type="text" class="form-control" formControlName="description" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label>Слика: </label><br>
+                                <input type="file" formControlName="image" (change)="handleFileSelect($event)">
+                            </div>
+                            <div class="form-group">
+                                <label>Тачан одговор</label>
+                                <input type="text" class="form-control" formControlName="correctAnswer" placeholder="">
+                            </div>
+
+                            <div class="form-group" style="border: 2px dotted grey; padding: 10px 10px 10px 10px; text-align: center;">
+                                <label>Регуларно питање</label>
+                                <input type="radio" class="form-control" formControlName="questionType" checked value="0">
+
+                                <label>Пробно питање</label>
+                                <input type="radio" class="form-control" formControlName="questionType" value="1">
+
+                                <label>Додатно питање</label>
+                                <input type="radio" class="form-control" formControlName="questionType" value="2">
+                            </div>
+                            <div class="form-group">
+                                <label>Категорија</label>
+                                <select class="form-control" formControlName="category">
+                           <option *ngFor="let item of categories" [value]="item.id">{{item.name}}</option>
+                        </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Редни број</label>
+                                <select class="form-control" formControlName="questionNumber">
+                           <option *ngFor="let item of [].constructor(questions.length + 1); let i = index"
+                              [value]="i+1">
+                              {{i+1}}
+                           </option>
+                        </select>
+                            </div>
+                        </form>
+                        <button type="button" class="btn btn-info" [disabled]="!form.valid" data-dismiss="modal" (click)="saveQuestion()">Сачувај</button>
+                        <button style="float: right" type="button" class="btn btn-secondary" data-dismiss="modal" (click)="openNewQuestionForm(false)">Сакриј</button>
+                        <hr>
+                    </div>
+
+                    <br />
+                    <table class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Поставка</th>
+                                <th scope="col">Тачан одговор</th>
+                                <th scope="col">Категорија</th>
+                                <th scope="col">Пробно</th>
+                                <th scope="col">Додатно</th>
+                                <th scope="col">Редни број</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let q of questions">
+                                <td>{{q.description}}</td>
+                                <td>{{q.correctAnswer}}</td>
+                                <td>{{q.category.name}}</td>
+                                <td class="text-center"> <i *ngIf="q.demo" class="fa fa-check icon" style="color:#5cd65c;"></i>
+                                </td>
+                                <td class="text-center"><i *ngIf="q.additional" class="fa fa-check icon" style="color:#5cd65c;"></i> </td>
+                                <td>{{q.questionNumber}}</td>
+                                <td class="text-center"><i class="fa fa-trash icon" (click)="deleteQuestion(q.id)" style="cursor: pointer;"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

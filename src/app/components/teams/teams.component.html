@@ -1,0 +1,183 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+    <h3 style="margin-top:25px; margin-bottom:50px;">Тимови</h3>
+    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#addTeamModal" (click)="openAddNewTeamModal()">+ Додај тим</button>
+    <br/>
+    <br/>
+    <table class="table" *ngIf="teamCaptains!=null && teams!=null">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Назив тима</th>
+                <th scope="col">Школа</th>
+                <th scope="col">Град</th>
+                <th scope="col">Капитен</th>
+                <th scope="col"></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let t of teams; let i = index;">
+                <td>{{t.name}}</td>
+                <td>{{t.school}}</td>
+                <td>{{t.city}}</td>
+                <td>{{getCaptain(t.captainId)}}</td>
+                <td><i class="fa fa-edit icon" data-toggle="modal" data-target="#addTeamModal" (click)="editTeam(t)" style="cursor: pointer;"></i></td>
+                <td><i class="fa fa-trash icon" data-toggle="modal" data-target="#deleteModal" (click)="setSelectedTeam(t)" style="cursor: pointer;"></i></td>
+                <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#actionModal" (click)="openTeamParticipants(t.id)" style="cursor: pointer;">Чланови</button> </td>
+                <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#addCaptainModal" (click)="openAddCaptainToteam(t.id)" style="cursor: pointer;">Постави капитена</button> </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Modal delete -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog top15" role="document">
+            <div class="modal-content">
+                <div class="modal-body" *ngIf='currentTeam'>
+                    Да ли сте сигурни да желите да обришете тим {{currentTeam.name}}?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Поништи</button>
+                    <button type="button" class="btn btn-info" (click)="deleteTeam()" data-dismiss="modal">Обриши</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal captain -->
+    <div class="modal fade" id="addCaptainModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog top15" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="exampleModalLabel">Одабир капитена</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                     </button>
+                </div>
+                <div class="modal-body" *ngIf='currentTeam'>
+                    <select [(ngModel)]="teamCaptain" id="category" class="form-control">
+                        <option *ngFor="let user of curentTeamUsers" [value]="user.id">{{user.firstName}} {{user.lastName}}</option>
+                      </select>
+                    <br/>
+                    <br/>
+                    <p style="font-style: italic;font-size:12px">
+                        Напомена: Капитен је особа задужена за пријаву на апликацију у случају тимских питања.</p>
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Поништи</button>
+                    <button type="button" class="btn btn-info" (click)="addCaptainToTeam()" data-dismiss="modal">Сачувај</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal users-->
+    <div class="modal fade" id="actionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg top15" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="exampleModalLabel">Чланови</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="openNewUserForm(false)">
+            <span aria-hidden="true">&times;</span>
+            </button>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn btn-outline-info" (click)="openNewUserForm(true)">+ Додај члана</button>
+                    <br/>
+                    <br/>
+
+                    <div *ngIf='newUserForm'>
+                        <form [formGroup]='form'>
+                            <div class="form-group">
+                                <label>Име</label>
+                                <input type="text" class="form-control" formControlName="firstName" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label>Презиме</label>
+                                <input type="text" class="form-control" formControlName="lastName" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label>Разред</label>
+                                <input type="number" class="form-control" formControlName="grade" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label>Корисничко име</label>
+                                <input type="text" class="form-control" formControlName="username" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label>Лозинка</label>
+                                <input type="text" class="form-control" formControlName="password" placeholder="">
+                            </div>
+                        </form>
+                        <button type="button" class="btn btn-info" data-dismiss="modal" [disabled]="!form.valid" (click)="addNewUser()">Сачувај</button></div>
+
+                    <br/>
+                    <br/>
+                    <table class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Име</th>
+                                <th scope="col">Презиме</th>
+                                <th scope="col">Разред</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let u of curentTeamUsers">
+                                <td>{{u.firstName}}</td>
+                                <td>{{u.lastName}}</td>
+                                <td>{{u.grade}}</td>
+                                <td><i class="fa fa-trash icon" (click)="deleteUser(u.id)" style="cursor: pointer;"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="openNewUserForm(false)">Затвори</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal team-->
+    <div class="modal fade" id="addTeamModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg top15" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="exampleModalLabel" *ngIf="!currentTeam">Додај тим</h6>
+                    <h6 class="modal-title" id="exampleModalLabel" *ngIf="currentTeam">Измени тим {{currentTeam.name}}</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="openNewUserForm(false)">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]='formTeam'>
+                        <div class="form-group">
+                            <label>Назив тима</label>
+                            <input type="text" class="form-control" formControlName="name" placeholder="">
+                        </div>
+                        <div class="form-group">
+                            <label>Школа</label>
+                            <input type="text" class="form-control" formControlName="school" placeholder="">
+                        </div>
+                        <div class="form-group">
+                            <label>Место</label>
+                            <input type="text" class="form-control" formControlName="city" placeholder="">
+                        </div>
+                    </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Затвори</button>
+                        <button type="button" class="btn btn-info" *ngIf="currentTeam" (click)="saveTeam()" [disabled]="!formTeam.valid" data-dismiss="modal">Сачувај</button>
+                        <button type="button" class="btn btn-info" *ngIf="!currentTeam" (click)="saveTeam()" [disabled]="!formTeam.valid" data-dismiss="modal">Сачувај</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

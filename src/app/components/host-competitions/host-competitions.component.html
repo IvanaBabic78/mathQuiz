@@ -1,0 +1,16 @@
+<div *ngIf="competitions" class="text-center">
+    <h3 class="text-center" style='margin-top:150px;margin-bottom:50px'>Одаберите такмичење</h3>
+
+    <table class="table">
+        <tbody>
+            <tr *ngFor="let c of competitions" style="cursor: pointer;" class="comp">
+                <td (click)="goToCompetition(c.id)">{{c.name}} - {{c.startDate | date: 'dd/MM/yyyy'}}, {{c.city}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="messageType==2" class="text-center">
+    <h3 class="text-center" style='margin-top:150px;margin-bottom:50px'>
+        Тренутно нема додатих такмичења. Додајте ново такмичење коришћењем админ налога. </h3>
+</div>

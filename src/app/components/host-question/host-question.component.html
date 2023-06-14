@@ -1,0 +1,105 @@
+<div class="container divShadow" style="text-align: center; padding-bottom: 50px;">
+    <h3 style='margin-top:50px;margin-bottom:50px'>Задатак</h3>
+    <img *ngIf='imagePath' [src]="imagePath">
+    <br />
+    <br />
+    <button (click)='onMessage()' type="submit" [disabled]="!showStartButton" class="btn btn-info login" style="margin-bottom: 50px;">Започни</button>
+
+    <h4 *ngIf="timeLeft > 0" style="margin-bottom: 150px;">Преостало време: {{timeLeft}} секунди</h4>
+    <h4 *ngIf="timeLeft <= 0" style="color: #ff8080">Време је истекло!</h4>
+
+    <h4 *ngIf="timeLeft <= 0" style="margin-bottom: 50px;">
+        Тачан одговор је:
+        <i *ngIf="correctAnswer == ''" class="fas fa-spinner fa-spin"></i>
+        <b style="font-weight: bold; color: #5cd65c;"> {{correctAnswer}} </b>
+    </h4>
+
+    <button *ngIf="correctAnswer" (click)='showPoints()' type="submit" class="btn btn-info" style="margin-bottom: 30px;">Прикажи поене</button>
+
+    <table class="table" *ngIf='teamQuestionPoints && currentQuestion.category.teamAnswer'>
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Тим</th>
+                <th scope="col">Одговор</th>
+                <th scope="col">Време</th>
+                <th scope="col">Поени</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let cp of teamQuestionPoints">
+                <td>{{cp.team.name}}</td>
+
+                <td *ngIf="cp.correct">{{cp.answer}} <i class="fa fa-check icon" style="color: #5cd65c;"></i></td>
+                <td *ngIf="cp.correct==null">Нема одговора</td>
+                <td *ngIf="cp.correct==false">{{cp.answer}} <i class="fa fa-times icon" style="color: #ff8080;"></i></td>
+
+                <td *ngIf="cp.correct==null">Време је истекло</td>
+                <td *ngIf="cp.correct!=null">{{cp.timeAnswered}} s</td>
+                <td>{{cp.points}}</td>
+                <td *ngIf="cp.correct!=null">
+                    <button *ngIf="cp.correct" type="button" class="btn btn-info" (click)="changeAnswer(cp.team.captainId, false)">Поништи</button>
+                    <button *ngIf="!cp.correct" type="button" class="btn btn-info" (click)="changeAnswer(cp.team.captainId, true)">Прихвати</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div *ngIf='teamQuestionPoints && !currentQuestion.category.teamAnswer'>
+        <div *ngFor="let item of teamQuestionPoints">
+            <h4 style="float: left;">{{item.team.name}}</h4>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">Члан тима</th>
+                        <th scope="col">Одговор</th>
+                        <th scope="col">Време</th>
+                        <th scope="col">Поени</th>
+                        <th scope="col">Корекција одговора</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let userAnswer of item.userAnswers">
+                        <td>{{userAnswer.user.firstName}} {{userAnswer.user.firstName}}</td>
+
+                        <td *ngIf="userAnswer.correct">{{userAnswer.answer}} <i class="fa fa-check icon" style="color: #5cd65c;"></i></td>
+                        <td *ngIf="userAnswer.correct==null">Нема одговора</td>
+                        <td *ngIf="userAnswer.correct==false">{{userAnswer.answer}} <i class="fa fa-times icon" style="color: #ff8080;"></i></td>
+                        <td *ngIf="userAnswer.correct==null">Време је истекло!</td>
+                        <td *ngIf="userAnswer.correct!=null">{{userAnswer.timeAnswered}} s</td>
+                        <td>{{userAnswer.points}}</td>
+                        <td *ngIf="userAnswer.correct!=null">
+                            <button *ngIf="userAnswer.correct" type="button" class="btn btn-info" (click)="changeAnswer(userAnswer.user.id, false)">Поништи</button>
+                            <button *ngIf="!userAnswer.correct" type="button" class="btn btn-info" (click)="changeAnswer(userAnswer.user.id, true)">Прихвати</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <google-chart [title]="title" [type]="type" [data]="graphData" [columnNames]="columnNames" [options]="options">
+    </google-chart>
+</div>
+
+
+
+<!-- Modal delete -->
+<div class="modal fade" id="editPointsQuestion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog top15" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form [formGroup]='updatePointsForm'>
+                    <div class="form-group">
+                        <label>Број поена</label>
+                        <input type="number" class="form-control" formControlName="points" placeholder="">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Поништи</button>
+                <button type="button" class="btn btn-info" (click)="savePoints()" data-dismiss="modal">Сачувај</button>
+            </div>
+        </div>
+    </div>
+</div>

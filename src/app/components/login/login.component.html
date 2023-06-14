@@ -1,0 +1,28 @@
+<div id="login">
+    <div class="row" style="margin-top:10%;">
+        <div class="col-sm">
+        </div>
+        <div class="col-sm form-container">
+            <h3 class='text-center form-title'>Пријава</h3>
+            <form [formGroup]='form' id='login-form'>
+                <div class="form-group">
+                    <label>Корисничко име</label>
+                    <input type="email" class="form-control" formControlName="username">
+                </div>
+                <div class="form-group">
+                    <label>Лозинка</label>
+                    <input type="password" class="form-control" formControlName="password">
+                </div>
+                <p *ngIf="loginError" class='text-center invalid' style="color: red">Погрешни подаци</p>
+                <button (click)='onLogin()' [disabled]="!form.valid" type="submit" class="btn btn-info login">Пријави
+               се</button>
+                <br />
+                <br />
+                <button (click)='onTeamLogin()' [disabled]="!form.valid" type="submit" class="btn btn-info login">Пријави се
+               као тим</button>
+            </form>
+        </div>
+        <div class="col-sm">
+        </div>
+    </div>
+</div>

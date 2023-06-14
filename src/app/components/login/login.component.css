@@ -1,0 +1,36 @@
+#logo {
+    width:30%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 5%;
+    margin-bottom: 3%;
+}
+
+.form-container {
+    margin-top: 20px;
+    background-color: white;
+    padding: 25px;
+    -webkit-box-shadow: 3px 2px 5px -1px rgba(186,186,186,1);
+    -moz-box-shadow: 3px 2px 5px -1px rgba(186,186,186,1);
+    box-shadow: 3px 2px 5px -1px rgba(186,186,186,1);
+}
+
+.form-title {
+    color:gray;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.login {
+    width: 100%; 
+}
+
+.invalid {
+    font-size:11px;
+    color:gray;
+}
+
+body {
+    background: url("../../../assets/background.png") !important; 
+}

@@ -1,0 +1,6 @@
+.divShadow {
+    -webkit-box-shadow: -9px 13px 10px -3px rgba(209,209,209,0.49);
+-moz-box-shadow: -9px 13px 10px -3px rgba(209,209,209,0.49);
+box-shadow: -9px 13px 10px -3px rgba(209,209,209,0.49);
+background-color: white;
+}
